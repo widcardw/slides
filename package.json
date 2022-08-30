@@ -2,7 +2,7 @@
   "name": "slidev",
   "private": true,
   "scripts": {
-    "build": "slidev build",
+    "build": "slidev build data-process/p4/slides.md",
     "dev": "slidev --open",
     "export": "slidev export"
   },
