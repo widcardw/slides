@@ -2,7 +2,7 @@
   NODE_VERSION = "14"
 
 [build]
-  publish = "dist"
+  publish = "data-process/p4/dist"
   command = "npm run build"
 
 [[redirects]]
