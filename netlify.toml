@@ -3,7 +3,7 @@
 
 [build]
   publish = "dist"
-  command = "npm run build --base /data-process/4-18-4-20/"
+  command = "npm run build"
 
 [[redirects]]
   from = "/*"

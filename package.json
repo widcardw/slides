@@ -2,7 +2,7 @@
   "name": "slidev",
   "private": true,
   "scripts": {
-    "build": "slidev build",
+    "build": "slidev build --base /data-process/4-18-4-20/",
     "dev": "slidev --open",
     "export": "slidev export"
   },
