@@ -150,7 +150,7 @@ Gender  male
 ...   ['Age', 'Gender']
 ... ]
     Age   Gender
-2    15     male
+2    15   female
 3    17     male
 ```
 
