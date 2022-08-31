@@ -75,17 +75,76 @@ widcardw
 layout: two-cols
 ---
 
+# 离散型异常值
+
+| idVerify | threeVerify | Default |
+|:--------:|:-----------:|:-------:|
+|   一致    |  不一致      |  0      |
+| <span text-red>None</span>| 一致 | <span text-red>None</span> |
+| 不一致    |  <span text-red>NaN</span> | <span text-red>0.0</span> |
+
+- 离散型特征的取值一般 **较为固定**
+- 异常值通常可以使用 **众数** 进行修正
+
+```python
+data.loc[data['Default'] == '0.0','Default'] = 0
+data.loc[data['Default'] == 'None', 'Default'] = 0
+```
+
+::right::
+
+# 连续型异常值
+
+| 年龄 | 月支出 | 月交易笔数 |
+|:---:| -----:| ---------:|
+| 22  | 4567.000000  |   30      |
+| 34  |<span text-red>-17889.000000</span> | 453 |
+|<span text-red>1024</span> | <span text-red>-0.000434</span> | 0 |
+
+- 连续型特征的取值可能 **没有特定的范围限制**
+- 异常值 **不能** 像离散值那样处理，必须针对性研究
+
+<div grid grid-cols-2 gap-2>
+
+```python {all|5,7}
+age                   19.0
+cashTotalAmt           0.0
+cashTotalCnt           0.0
+monthCardLargeAmt      0.0
+onlineTransAmt -12676500.0
+onlineTransCnt         0.0
+publicPayAmt    -6034950.0
+publicPayCnt           0.0
+```
+
+```python {all|4}
+        TransAmt  TransCnt
+7       0.000000       0.0
+12      0.000000       0.0
+14     -0.000434       0.0
+16      0.000000       0.0
+17      0.000000       0.0
+...          ...       ...
+47335   0.000000       0.0
+```
+
+</div>
+
+---
+layout: two-cols
+---
+
 
 # Series
 
 | index |    value   |
 |:------------:|:----------:|
-|  0           | <span style="color: #b32535">Angular</span>    |
-|  1           | <span style="color: #82d7f7">React</span>       |
-|  2           | <span style="color: #65b687">Vue</span>       |
-|  3           | <span style="color: #eb4f27">Svelte</span> |
-|  4           | <span style="color: #3e5998">Solidjs</span> |
-|  5           | <span style="color: #603cb2">Preact</span>      |
+|  0           | <span class="text-#b32535">Angular</span>    |
+|  1           | <span class="text-#82d7f7">React</span>       |
+|  2           | <span class="text-#65b687">Vue</span>       |
+|  3           | <span class="text-#eb4f27">Svelte</span> |
+|  4           | <span class="text-#3e5998">Solidjs</span> |
+|  5           | <span class="text-#603cb2">Preact</span>      |
 
 ::right::
 
@@ -93,7 +152,7 @@ layout: two-cols
 
 - 由于 Series 相当于一维数组，因此可以像一维列表一样进行切片操作
 
-```python {1|2|3|4|all}
+```python {1|1-2|1-3|all}
 >>> print(data[2])
 Vue
 >>> print(data[2:5])
@@ -223,7 +282,7 @@ dtype: float64
 
 - 在 Numpy 中，我们常用以下操作来对数据进行过滤
 
-```python {1|2|3|4|5|6|all}
+```python {1|1-2|3|3-4|5|5-6|all}
 >>> a
 array([-1,  0,  1,  2,  3])
 >>> a > 0
@@ -236,7 +295,7 @@ array([1, 2, 3])
 - 在掩码的作用下，得到的切片就是过滤后的数组
 - 对于二维数组，也同样生效
 
-```python {1|2-3|4|5-6|7|8|all}
+```python {1|1-3|4|4-6|7|7-8|all}
 >>> b
 array([[1, 2, 3],
        [4, 5, 6]])
@@ -338,6 +397,8 @@ print(online_trans)
 ```
 
 </div>
+
+> 消费金额小于 0 可能是正常现象。这在实际业务中也是可以解释的：网上消费既可以有花销也可以有转入金额，例如退款或银行卡转账。
 
 ---
 
