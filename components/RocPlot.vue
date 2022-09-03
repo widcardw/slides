@@ -3,7 +3,7 @@ import { ref, reactive, watch, computed } from 'vue';
 import Table from './Table.vue';
 import Slider from './Slider.vue';
 const toFix = ref(1)
-const lim = ref(1)
+const lim = ref(0)
 const pairs = ref<Array<{x: number, y: number}>>([])
 const table = reactive({
     columns: ['ID', '实际', '预测为正', `阈值 = ${lim.value.toFixed(toFix.value)}`, '属于'],
@@ -55,6 +55,8 @@ watch(lim, (l) => {
     if (!pairs.value.find(it => it.x === pair.x && it.y === pair.y))
         pairs.value.push(pair)
 })
+
+lim.value = 1
 </script>
 
 <template>
@@ -62,7 +64,11 @@ watch(lim, (l) => {
         <Table :columns="table.columns" :data="table.data" text="sm center" leading="tight" />
         <div flex="~ col">
             <div>
-                <Slider v-model="lim" :max-value="1" :min-value="0" :step="1 / 10 ** toFix" block w-full />
+                <div flex space-x-2 items-center>
+                    <Slider v-model="lim" :max-value="1" :min-value="0" :step="1 / 10 ** toFix" flex-1 />
+                    <input v-model.number="toFix" type="number" min="1" max="2" bg="transparent" w-2rem border="~ zinc rounded" outline="!none" p="l-1">
+                    <div cursor-pointer i-carbon-renew @click="() => { pairs = []; lim = 1 }" />
+                </div>
                 <div>
                     <p>FPR = 被预测为<span text-red>阳性</span>的<span text-green>阴性</span>数 / 实际的<span text-green>阴性</span>数 = {{ fpr.toFixed(toFix) }}</p>
                     <p>TPR = 被预测为<span text-red>阳性</span>的<span text-red>阳性</span>数 / 实际的<span text-red>阳性</span>数 = {{ tpr.toFixed(toFix) }}</p>
@@ -72,7 +78,7 @@ watch(lim, (l) => {
                 x-label="FPR" y-label="TPR" title="ROC" 
                 :x-range="[0, 1, 0.1]" :y-range="[0, 1, 0.1]" 
                 :to-fix="toFix" 
-                :pairs="[{data: pairs, color: [0, 127, 255]}]" flex-1 
+                :pairs="[{data: pairs, color: [0, 127, 255], line: true}]" flex-1 
                 :show-dec="true"
             />
         </div>

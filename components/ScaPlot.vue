@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import p5 from 'p5'
 import { ref, watch, onMounted } from 'vue';
-import { isDark } from '../utils/dark';
 import { useElementSize } from '@vueuse/core'
 import interpolate from '../utils/interpolate';
 import { calcTextColor } from '../utils/dark'
+
 const props = withDefaults(defineProps<{
   title: string
   xLabel: string
@@ -15,12 +15,13 @@ const props = withDefaults(defineProps<{
   toFix?: number
   showDec?: boolean
 }>(), {
-  toFix: 0,
+  toFix: 1,
   showDec: false,
 })
-const p5Instance = ref<p5 | null>(null)
+
 const dom = ref<HTMLElement>()
 const { width: cw, height: ch } = useElementSize(dom)
+const p5Instance = ref<p5 | null>(null)
 
 const tickRate = 0.01
 const dotSize = 0.015
@@ -120,17 +121,13 @@ function sketch(s: p5) {
     }
     // text
     s.noStroke()
-    const textColor = calcTextColor()
-    s.fill(textColor)
-    s.textAlign('center')
-    s.text(props.title, 0, 0, cw.value, ch.value * 0.1)
-    s.text(props.yLabel, origin.x, ch.value * 0.05)
-    s.textAlign('left')
+    s.fill(calcTextColor())
+    s.text(props.title, cw.value * 0.5, 0, cw.value, ch.value * 0.1)
+    s.text(props.yLabel, origin.x, ch.value * 0.07)
     s.text(props.xLabel, cw.value * (1 - buff + 0.01), origin.y)
 
-    s.textAlign('center')
     const b = ch.value * 0.05
-    const b2 = cw.value * 0.02
+    const b2 = cw.value * 0.07
     if (props.showDec){
       // 刻度数字
       for (let i = 0; i <= xSteps; i++) {
@@ -140,7 +137,6 @@ function sketch(s: p5) {
           x, origin.y + b
         )
       }
-      s.textAlign('right', 'center')
       for (let i = 1; i <= ySteps; i++) {
         const y = interpolate(ch.value * (1 - buff), ch.value * buff, i / ySteps)
         s.text(
@@ -161,7 +157,7 @@ watch([cw, ch], ([w, h]) => {
 onMounted(() => {
   if (dom) {
     new p5(sketch, dom.value)
-  } 
+  }
 })
 </script>
 

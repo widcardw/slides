@@ -167,3 +167,168 @@ layout: two-cols
 
 # 7.2 利用 AUC 评估逻辑回归模型准确性
 
+<div grid="~ cols-2 gap-2">
+
+```python
+import matplotlib.pyplot as plt
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import train_test_split
+from sklearn.externals import joblib
+import pandas as pd
+from sklearn import metrics
+data = pd.read_table('dataset13.txt',sep='\t')
+y = data['Default'].values
+x = data.drop(['Default'], axis=1).values
+# 划分训练集和测试集
+x_train, x_test, y_train, y_test = train_test_split(
+  x, y, test_size=0.2,random_state = 33,stratify=y)
+# 加载模型
+lr = joblib.load("train_model.m")
+y_predict_proba = lr.predict_proba(x_test)
+y_predict = lr.predict_proba(x_test)[:,1]
+#用metrics.roc_curve()求出 fpr, tpr, threshold
+fpr, tpr, threshold = metrics.roc_curve(
+  y_test, y_predict)
+#用metrics.auc求出roc_auc的值
+roc_auc = metrics.auc(fpr, tpr)
+```
+
+```python
+#将图片大小设为8:6
+fig,ax = plt.subplots(figsize=(8,6))
+
+#将plt.plot里的内容填写完整
+plt.plot(fpr, tpr, label = f'AUC = {roc_auc:.2f}')
+ 
+#将图例显示在右下方
+plt.legend(loc = 'lower right') 
+ 
+#画出一条红色对角虚线
+plt.plot([0, 1], [0, 1],'r--') 
+ 
+#设置横纵坐标轴范围
+plt.xlim([-0.01, 1.01]) 
+plt.ylim([-0.01, 1.01])
+ 
+#设置横纵名称以及图形名称
+plt.ylabel('True Positive Rate')
+plt.xlabel('False Positive Rate')
+plt.title('Receiver Operating Characteristic Curve')
+plt.show()
+```
+
+</div>
+
+---
+
+# 7.2 利用 AUC 评估逻辑回归模型准确性
+
+<img src="/7.2.png" mx-auto>
+
+---
+
+# 7.3 利用 AUC 评估随机森林模型准确性
+
+<div grid="~ cols-2 gap-2">
+
+```python {all|13-14}
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import train_test_split
+import pandas as pd
+from sklearn.externals import joblib
+from sklearn import metrics
+import matplotlib.pyplot as plt
+data = pd.read_table('dataset13.txt',sep='\t')
+y = data['Default'].values
+x = data.drop(['Default'], axis=1).values
+# 划分训练集和测试集
+x_train, x_test, y_train, y_test = train_test_split(
+  x, y, test_size=0.2,random_state = 33,stratify=y)
+# 加载模型
+rf_clf = joblib.load("train_model2.m")
+y_predict = rf_clf.predict_proba(x_test)[:,1]
+#用metrics.roc_curve()求出 fpr, tpr, threshold
+fpr, tpr, threshold = metrics.roc_curve(
+  y_test, y_predict)
+
+#用metrics.auc求出roc_auc的值
+roc_auc = metrics.auc(fpr, tpr)
+```
+
+```python
+#将图片大小设为8:6
+fig,ax = plt.subplots(figsize=(8,6))
+
+#将plt.plot里的内容填写完整
+plt.plot(fpr, tpr, label = f'AUC = {roc_auc:.2f}')
+
+#将图例显示在右下方
+plt.legend(loc = 'lower right') 
+
+#画出一条红色对角虚线
+plt.plot([0, 1], [0, 1],'r--') 
+
+#设置横纵坐标轴范围
+plt.xlim([-0.01, 1.01]) 
+plt.ylim([-0.01, 1.01])
+
+#设置横纵名称以及图形名称
+plt.ylabel('True Positive Rate')
+plt.xlabel('False Positive Rate')
+plt.title('Receiver Operating Characteristic Curve')
+plt.show()
+```
+
+</div>
+
+<div v-click>
+
+> 模型报错了！
+
+</div>
+
+---
+
+# 6.12 使用网格搜索进行随机森林参数调优
+
+```python {all|20}
+import ...
+data = pd.read_table('dataset13.txt',sep='\t')
+y = data['Default'].values
+x = data.drop(['Default'], axis=1).values
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2,random_state = 33,stratify=y)
+
+rf = RandomForestClassifier()
+
+# 设置需要调试的参数
+tuned_parameters = {'n_estimators': [180,190],'max_depth': [8,10]}
+
+# 调用网格搜索函数
+rf_clf = GridSearchCV(rf, tuned_parameters, scoring='roc_auc', n_jobs=2, cv=5)
+rf_clf.fit(x_train, y_train)
+
+y_predict = rf_clf.predict_proba(x_test)[:, 1]
+test_auc = roc_auc_score(y_test, y_predict)
+print ('随机森林模型test AUC:')
+print (test_auc)
+joblib.dump(rf_clf, 'train_model2.m')
+```
+
+<div v-click>
+
+> 将训练好的模型下载后，上传至 7.3
+
+</div>
+
+---
+
+# 7.3 利用 AUC 评估随机森林模型准确性
+
+<img src="/7.3.png" mx-auto>
+
+---
+layout: center
+---
+
+- 工具：[Slidev](https://sli.dev)
+- 绘图：[p5.js](https://p5js.org)

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
-import { useElementSize, useDark } from '@vueuse/core'
+import { useElementSize } from '@vueuse/core'
 import p5 from 'p5'
 import interpolate from '../utils/interpolate'
-import { isDark, calcTextColor } from '../utils/dark';
+import { calcTextColor } from '../utils/dark';
 
 const props = defineProps<{
   title: string
@@ -25,7 +25,7 @@ const { width: canvasW } = useElementSize(dom)
 const p5Instance = ref<p5 | null>(null)
 
 const randList: number[] = []
-const dotSize = 1 / 200
+const dotSize = 1 / 100
 
 for (let i = 0; i < props.num; i++) {
   randList.push(Math.random() - 0.5)
