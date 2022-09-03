@@ -38,6 +38,7 @@ function sketch(s: p5) {
   }
 
   s.draw = () => {
+    s.background(255 - calcTextColor())
     s.stroke(127)
     // x 轴
     s.line(

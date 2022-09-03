@@ -13,8 +13,6 @@
     "@types/p5": "^1.4.2"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^0.26.2",
-    "eslint": "^8.23.0",
     "p5": "^1.4.2"
   }
 }

@@ -11,22 +11,23 @@ const props = withDefaults(defineProps<{
   yLabel: string
   xRange: [number, number, number?]
   yRange: [number, number, number?]
-  pairs: Array<{x: number, y: number}>
+  pairs: Array<{data: Array<{x: number, y: number}>, color: [number, number, number], line?: boolean}>
   toFix?: number
   showDec?: boolean
 }>(), {
   toFix: 0,
-  showDec: false
+  showDec: false,
 })
 const p5Instance = ref<p5 | null>(null)
 const dom = ref<HTMLElement>()
-const { width: cw } = useElementSize(dom)
+const { width: cw, height: ch } = useElementSize(dom)
 
 const tickRate = 0.01
 const dotSize = 0.015
 const halfDotSize = dotSize / 2
 const buff = 0.1
 let xSteps = 5
+const dashes = 41
 const xDis = props.xRange[1] - props.xRange[0]
 if (props.xRange[2])
   xSteps = xDis / props.xRange[2]
@@ -41,9 +42,10 @@ function sketch(s: p5) {
     s.createCanvas(cw.value, cw.value)
   }
   s.draw = () => {
+    s.background(255 - calcTextColor())
     const origin = {
        x: interpolate(cw.value * buff, cw.value * (1 - buff), - props.xRange[0] / xDis),
-       y: interpolate(cw.value * (1 - buff), cw.value * buff, - props.yRange[0] / yDis),
+       y: interpolate(ch.value * (1 - buff), ch.value * buff, - props.yRange[0] / yDis),
     }
     s.stroke(127)
 
@@ -57,23 +59,23 @@ function sketch(s: p5) {
     // y axis
     s.line(
       origin.x,
-      cw.value * buff,
+      ch.value * buff,
       origin.x,
-      cw.value * (1 - buff)
+      ch.value * (1 - buff)
     )
     // x ticks
     for (let i = 0; i <= xSteps; i++) {
       const x = interpolate(cw.value * buff, cw.value * (1 - buff), i / xSteps)
       s.line(
         x,
-        origin.y + cw.value * tickRate,
+        origin.y + ch.value * tickRate,
         x,
-        origin.y - cw.value * tickRate,
+        origin.y - ch.value * tickRate,
       )
     }
     // y ticks
     for (let i = 0; i <= ySteps; i++) {
-      const y = interpolate(cw.value * buff, cw.value * (1 - buff), i / ySteps)
+      const y = interpolate(ch.value * buff, ch.value * (1 - buff), i / ySteps)
       s.line(
         origin.x - cw.value * tickRate,
         y,
@@ -81,29 +83,54 @@ function sketch(s: p5) {
         y
       )
     }
+    // 对角线
+    s.stroke(255, 127, 0)
+    for (let i = 0; i < dashes; i += 2) {
+      s.line(
+        interpolate(cw.value * buff, cw.value * (1 - buff), i / dashes), 
+        interpolate(ch.value * (1 - buff), ch.value * buff, i / dashes),
+        interpolate(cw.value * buff, cw.value * (1 - buff), (i + 1) / dashes), 
+        interpolate(ch.value * (1 - buff), ch.value * buff, (i + 1) / dashes)
+      )
+    }
     s.noStroke()
     s.fill(0, 127, 255)
     // Dots
-    for (let pair of props.pairs) {
-      const x = interpolate(cw.value * buff, cw.value * (1 - buff), (pair.x - props.xRange[0]) / xDis)
-      const y = interpolate(cw.value * (1 - buff), cw.value * buff, (pair.y - props.yRange[0]) / yDis)
-      s.rect(
-        x - cw.value * halfDotSize,
-        y - cw.value * halfDotSize,
-        dotSize * cw.value, dotSize * cw.value
-      )
+    for (let data of props.pairs) {
+      let [lastX, lastY] = [0, 0]
+      // 着色
+      s.fill(data.color[0], data.color[1], data.color[2])
+      s.stroke(data.color[0], data.color[1], data.color[2])
+      // 画点
+      for (let i = 0; i < data.data.length; i++) {
+        const p = data.data[i]
+        const x = interpolate(cw.value * buff, cw.value * (1 - buff), (p.x - props.xRange[0]) / xDis)
+        const y = interpolate(ch.value * (1 - buff), ch.value * buff, (p.y - props.yRange[0]) / yDis)
+        s.rect(
+          x - cw.value * halfDotSize,
+          y - ch.value * halfDotSize,
+          dotSize * cw.value, dotSize * cw.value
+        )
+        if (data.line && i !== 0) {
+          s.line(lastX, lastY, x, y)
+        }
+        lastX = x
+        lastY = y
+      }
     }
     // text
+    s.noStroke()
     const textColor = calcTextColor()
     s.fill(textColor)
     s.textAlign('center')
-    s.text(props.title, 0, 0, cw.value, cw.value * 0.1)
-    s.text(props.yLabel, origin.x, cw.value * 0.09)
+    s.text(props.title, 0, 0, cw.value, ch.value * 0.1)
+    s.text(props.yLabel, origin.x, ch.value * 0.05)
     s.textAlign('left')
     s.text(props.xLabel, cw.value * (1 - buff + 0.01), origin.y)
 
     s.textAlign('center')
-    const b = cw.value * 0.05
+    const b = ch.value * 0.05
+    const b2 = cw.value * 0.02
     if (props.showDec){
       // 刻度数字
       for (let i = 0; i <= xSteps; i++) {
@@ -113,21 +140,21 @@ function sketch(s: p5) {
           x, origin.y + b
         )
       }
-      s.textAlign('right')
+      s.textAlign('right', 'center')
       for (let i = 1; i <= ySteps; i++) {
-        const y = interpolate(cw.value * (1 - buff), cw.value * buff, i / ySteps)
+        const y = interpolate(ch.value * (1 - buff), ch.value * buff, i / ySteps)
         s.text(
           interpolate(props.yRange[0], props.yRange[1], i / ySteps).toFixed(props.toFix),
-          origin.x - b, y
+          origin.x - b2, y
         )
       }
     }
   }
 }
 
-watch(cw, (w) => {
-  if (p5Instance.value && w > 0) {
-    p5Instance.value.resizeCanvas(w, w)
+watch([cw, ch], ([w, h]) => {
+  if (p5Instance.value && w > 0 && h > 0) {
+    p5Instance.value.resizeCanvas(w, h)
   }
 })
 
