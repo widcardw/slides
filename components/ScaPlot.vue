@@ -23,7 +23,7 @@ const dom = ref<HTMLElement>()
 const { width: cw } = useElementSize(dom)
 
 const tickRate = 0.01
-const dotSize = 0.02
+const dotSize = 0.015
 const halfDotSize = dotSize / 2
 const buff = 0.1
 let xSteps = 5
