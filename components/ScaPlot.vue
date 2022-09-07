@@ -4,6 +4,7 @@ import { ref, watch, onMounted } from 'vue';
 import { useElementSize } from '@vueuse/core'
 import interpolate from '../utils/interpolate';
 import { calcTextColor, DARK_COLOR, LIGHT_COLOR } from '../utils/dark'
+import { isDark } from '@slidev/client/logic/dark';
 
 const props = withDefaults(defineProps<{
   title: string
@@ -43,7 +44,7 @@ function sketch(s: p5) {
     s.createCanvas(cw.value, cw.value)
   }
   s.draw = () => {
-    s.background(calcTextColor() === DARK_COLOR ? LIGHT_COLOR : DARK_COLOR)
+    s.background(isDark.value ? DARK_COLOR : LIGHT_COLOR)
     const origin = {
        x: interpolate(cw.value * buff, cw.value * (1 - buff), - props.xRange[0] / xDis),
        y: interpolate(ch.value * (1 - buff), ch.value * buff, - props.yRange[0] / yDis),

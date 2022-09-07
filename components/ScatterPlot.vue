@@ -4,6 +4,7 @@ import { useElementSize } from '@vueuse/core'
 import p5 from 'p5'
 import interpolate from '../utils/interpolate'
 import { calcTextColor, DARK_COLOR, LIGHT_COLOR } from '../utils/dark';
+import { isDark } from '@slidev/client/logic/dark';
 
 const props = defineProps<{
   title: string
@@ -38,7 +39,7 @@ function sketch(s: p5) {
   }
 
   s.draw = () => {
-    s.background(calcTextColor() == DARK_COLOR ? LIGHT_COLOR : DARK_COLOR)
+    s.background(isDark.value ? DARK_COLOR : LIGHT_COLOR)
     s.stroke(127)
     // x 轴
     s.line(
