@@ -111,10 +111,10 @@ layout: two-cols
 
 <ScaPlot 
   title="" 
-  x-label="样本" y-label="预测" 
+  x-label="FPR" y-label="TPR" 
   :x-range="[0, 1, 0.1]" :y-range="[0, 1, 0.1]" 
   :to-fix="1" :show-dec="true" 
-  :pairs="[{data: [{x: 0, y: 0}, {x: 0.1, y: 0.2}, {x: 0.15, y: 0.35}, {x: 0.2, y: 0.35}, {x: 0.3, y: 0.5}, {x: 0.5, y: 0.7}, {x: 0.6, y: 0.8}, {x: 0.8, y: 0.9}], color: [0, 127, 255]}]"
+  :pairs="[{data: [{x: 0, y: 0}, {x: 0, y: 0.2}, {x: 0, y: 0.4}, {x: 0.2, y: 0.4}, {x: 0.2, y: 0.6}, {x: 0.2, y: 0.8}, {x: 0.4, y: 0.8}, {x: 0.6, y: 0.8}, {x:0.8,y:0.8},{x:0.8,y:1},{x:1,y:1}], color: [0, 127, 255], line: true}]"
   h-full
 />
 
