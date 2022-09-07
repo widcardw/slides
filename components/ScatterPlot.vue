@@ -3,7 +3,7 @@ import { onMounted, ref, watch } from 'vue';
 import { useElementSize } from '@vueuse/core'
 import p5 from 'p5'
 import interpolate from '../utils/interpolate'
-import { calcTextColor } from '../utils/dark';
+import { calcTextColor, DARK_COLOR, LIGHT_COLOR } from '../utils/dark';
 
 const props = defineProps<{
   title: string
@@ -38,7 +38,7 @@ function sketch(s: p5) {
   }
 
   s.draw = () => {
-    s.background(255 - calcTextColor())
+    s.background(calcTextColor() == DARK_COLOR ? LIGHT_COLOR : DARK_COLOR)
     s.stroke(127)
     // x 轴
     s.line(
