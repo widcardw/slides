@@ -23,6 +23,13 @@ css: unocss
 
 widcardw
 
+<div class="abs-br m-6 flex gap-2">
+  <a href="https://slides.widcard.win/data-process/p7" target="_blank" 
+    class="text-sm icon-btn opacity-50 !border-none !hover:text-white">
+    SPA
+  </a>
+</div>
+
 ---
 
 # 7.1 风险评估模型效果评价方法
@@ -37,12 +44,6 @@ widcardw
   - KS 检验
 - 稳定性：模型是在特定时间点开发的，**是否对外部样本有效** 需要经过 **稳定性测试**。群体稳定性指标 (PSI) 是最常用的模型稳定性评价指标
 - 可解释性：在逻辑回归和随机森林模型中，考量各个解释变量对目标变量预测结果的影响程度，可以得到模型指标重要性
-
-<div v-click class="absolute -right-0 -top-5">
-
-（云里雾里 不知所云）
-
-</div>
 
 ---
 
@@ -67,15 +68,15 @@ layout: two-cols
 
 |         |  样本 1  |  样本 2  | 合计 |
 |:-------:|:--------:|:-------:|:---:|
-| 诊断试验 1 | <span text-red>43 真阳</span>   | <span text-green>5 假阳</span>  | 48  |
-| 诊断试验 2 | <span text-red>7 假阴</span>    | <span text-green>45 真阴</span> | 52  |
+| 诊断试验 1 | <span text-red>43 真阳 TP</span>   | <span text-green>5 假阳 FP</span>  | 48  |
+| 诊断试验 2 | <span text-red>7 假阴 FN</span>    | <span text-green>45 真阴 TN</span> | 52  |
 | 合计    | 50       | 50     | 100 |
 
 - 所有状态：<span text-red>真阳</span>，<span text-green>假阳</span>，<span text-green>真阴</span>，<span text-red>假阴</span>
 - <span text-red>阳性</span>预测值：检测出<span text-red>有病</span>的人中，多少<span text-red>真正有病</span>
 - <span text-green>阴性</span>预测值：检测数<span text-green>没病</span>的人中，多少<span text-green>真正没病</span>
-- $TPR = {TP \over TP + FN} = {被预测为{\color{red}阳性}的{\color{red}阳性}数 \over 实际{\color{red}阳性}数} = \color{red} 43/50$
-- $FPR = {FP \over FP + TN} = {被预测为{\color{red}阳性}的{\color{green}阴性}数 \over 实际{\color{green}阴性}数} = \color{green}5/50$
+- $TPR = { {\color{red}TP} \over {\color{red}TP} + {\color{red}FN} } = {被预测为{\color{red}阳性}的{\color{red}阳性}数 \over 实际{\color{red}阳性}数} = \color{red} 43/50$
+- $FPR = { {\color{green}FP} \over {\color{green}FP} + {\color{green}TN} } = {被预测为{\color{red}阳性}的{\color{green}阴性}数 \over 实际{\color{green}阴性}数} = \color{green}5/50$
 
 > TPR, FPR 的值都在 $[0,1]$ 内
 
@@ -89,7 +90,7 @@ layout: two-cols
 
 # ROC 曲线的绘制
 
-- 将全部样本按 **概率递减** 顺序排列
+- 将全部样本按 **预测概率递减** 顺序排列
 - 阈值从 1 至 0 变更，计算各阈值下 $(FPR, TPR)$ 对 
 - 将数值对绘制在直角坐标系中
 
@@ -120,6 +121,106 @@ layout: two-cols
 
 ---
 
+# 模型中的数据
+
+```python
+# 分割训练集和测试集
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=33, stratify=y)
+# 根据模型对测试集进行预测
+y_predict = lr.predict_proba(x_test)[:,1]
+# 打印数据
+print('\n'.join(map(lambda x: str(x), zip(y_predict[1000:1056].round(3), y_test[1000:1056]))))
+```
+
+<div grid="~ cols-7 gap-2">
+
+```python {1}
+(0.383, 1.0)
+(0.297, 0.0)
+(0.011, 0.0)
+(0.105, 0.0)
+(0.349, 0.0)
+(0.248, 0.0)
+(0.457, 0.0)
+(0.119, 0.0)
+```
+
+
+```python {0}
+(0.042, 0.0)
+(0.036, 0.0)
+(0.069, 0.0)
+(0.100, 0.0)
+(0.003, 0.0)
+(0.070, 0.0)
+(0.093, 0.0)
+(0.138, 0.0)
+```
+
+```python {0}
+(0.569, 0.0)
+(0.026, 0.0)
+(0.054, 0.0)
+(0.088, 0.0)
+(0.247, 0.0)
+(0.965, 0.0)
+(0.235, 0.0)
+(0.303, 0.0)
+```
+
+```python {3,5,7}
+(0.022, 0.0)
+(0.385, 0.0)
+(0.990, 1.0)
+(0.012, 0.0)
+(0.995, 1.0)
+(0.086, 0.0)
+(0.285, 1.0)
+(0.137, 0.0)
+```
+
+
+```python {6,8}
+(0.452, 0.0)
+(0.131, 0.0)
+(0.011, 0.0)
+(0.919, 0.0)
+(0.126, 0.0)
+(0.945, 1.0)
+(0.114, 0.0)
+(0.038, 1.0)
+```
+
+```python {4,5}
+(0.098, 0.0)
+(0.040, 0.0)
+(0.081, 0.0)
+(0.071, 1.0)
+(0.999, 1.0)
+(0.032, 0.0)
+(0.051, 0.0)
+(0.092, 0.0)
+```
+
+```python {0}
+(0.456, 0.0)
+(0.197, 0.0)
+(0.022, 0.0)
+(0.379, 0.0)
+(0.174, 0.0)
+(0.054, 0.0)
+(0.305, 0.0)
+(0.371, 0.0)
+```
+
+</div>
+
+- `y_predict` 中是预测为违约的概率，`y_test` 是 `Default` 一列的值
+- 绘制 ROC 曲线前，先将预测概率从高到低排序，然后从 1 到 0 遍历，计算对应的 TPR 和 FPR 值
+- 阈值的含义：我们认为，高于阈值的就判定为违约，低于阈值的就判定为未违约，并不是常识认为的 50% 为界限
+
+---
+
 <RocPlot />
 
 ---
@@ -139,6 +240,7 @@ layout: two-cols
 - AUC 值就是 ROC 曲线下方的面积
   - AUC 值越大，表示模型的性能越好
   - AUC = 0.5 时，相当于随机猜测
+- 最优临界点：找到一个阈值，使得 TPR 尽可能高，而 FPR 尽可能低
 
 ::right::
 
@@ -164,6 +266,26 @@ layout: two-cols
 />
 
 ---
+layout: two-cols
+---
+
+# ROC 曲线的特点
+
+- 当测试集中的 **正负样本的分布变化** 的时候，ROC曲线能够保持不变
+- (a)\(c\) 为 ROC 曲线，(b)(d) 为 Precision-Recall 曲线
+  - $Precision={ {\color{red}TP} \over {\color{red}TP} + {\color{green}FP} }$
+  - $Recall=TPR={ {\color{red}TP} \over {\color{red}TP} + {\color{red}FN} }$
+- \(c\)(d) 将测试集中 **负样本的数量增加到原来的 10 倍**，ROC 曲线较为稳定，而 PR 曲线变化很大
+- 在实际的数据集中经常会出现 **类不平衡现象**，即负样本比正样本多很多 (或者相反)，而且测试数据中的正负样本的分布也可能随着时间变化。在这种情况下，ROC 曲线在评估上有 **更好的稳定性**
+- PR 曲线在正负样本分布得极不均匀时，能更有效地反映模型的好坏
+
+::right::
+
+![](https://static.plob.org/wp-content/uploads/2018/03/1520544675-3272-kNs1qZ8ibDjswYZS0SuVpWnjlcEQ.png)
+
+> 图片来源：<https://www.plob.org/article/12476.html>
+
+---
 
 # 7.2 利用 AUC 评估逻辑回归模型准确性
 
@@ -184,8 +306,8 @@ x_train, x_test, y_train, y_test = train_test_split(
   x, y, test_size=0.2,random_state = 33,stratify=y)
 # 加载模型
 lr = joblib.load("train_model.m")
-y_predict_proba = lr.predict_proba(x_test)
 y_predict = lr.predict_proba(x_test)[:,1]
+
 #用metrics.roc_curve()求出 fpr, tpr, threshold
 fpr, tpr, threshold = metrics.roc_curve(
   y_test, y_predict)
@@ -224,6 +346,37 @@ plt.show()
 # 7.2 利用 AUC 评估逻辑回归模型准确性
 
 <img src="/7.2.png" mx-auto>
+
+---
+
+# 使用 PR 曲线呈现
+
+<div grid="~ cols-2" place-items-center>
+
+<div>
+
+```python
+pre, rec, the2 = metrics.precision_recall_curve(
+  y_test, y_predict
+)
+plt.plot(pre, rec)
+
+plt.xlim([-0.01, 1.01]) 
+plt.ylim([-0.01, 1.01])
+
+plt.ylabel('Recall Rate')
+plt.xlabel('Precision Rate')
+plt.title('Precision-Recall Curve')
+plt.show()
+```
+
+- 因为本实验中，正负样本分布不均匀，因此 PR 曲线呈现出的效果也有一定的参考价值
+
+</div>
+
+![](/prc.png)
+
+</div>
 
 ---
 
