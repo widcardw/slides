@@ -3,8 +3,7 @@ import { onMounted, ref, watch } from 'vue';
 import { useElementSize } from '@vueuse/core'
 import p5 from 'p5'
 import interpolate from '../utils/interpolate'
-import { calcTextColor, DARK_COLOR, LIGHT_COLOR } from '../utils/dark';
-import { isDark } from '@slidev/client/logic/dark';
+import { calcTextColor, DARK_COLOR, LIGHT_COLOR, isDark } from '../utils/dark';
 
 const props = defineProps<{
   title: string
