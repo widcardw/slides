@@ -2,7 +2,7 @@
 import { ref, reactive, watch, computed } from 'vue';
 import Table from './Table.vue';
 import Slider from './Slider.vue';
-const toFix = ref(1)
+const toFix = ref(2)
 const lim = ref(1)
 const pairs = ref<Array<{x: number, y: number}>>([{ x: 0, y: 0 }])
 const table = reactive({

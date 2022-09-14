@@ -345,7 +345,7 @@ plt.show()
 
 # 7.2 利用 AUC 评估逻辑回归模型准确性
 
-<img src="/7.2.png" mx-auto>
+<img src="/data-process/7.2.png" mx-auto>
 
 ---
 
@@ -374,7 +374,7 @@ plt.show()
 
 </div>
 
-![](/prc.png)
+![](/data-process/prc.png)
 
 </div>
 
@@ -477,7 +477,7 @@ joblib.dump(rf_clf, 'train_model2.m')
 
 # 7.3 利用 AUC 评估随机森林模型准确性
 
-<img src="/7.3.png" mx-auto>
+<img src="/data-process/7.3.png" mx-auto>
 
 ---
 layout: center
